@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>DelegatRadio.qml</file>
+        <file>MyRadio.qml</file>
+        <file>FavoriteRadio.qml</file>
+        <file>Stations.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>Switch/SSwitch.qml</file>
+        <file>Switch/SSwitchDelegate.qml</file>
+        <file>Switch/SSwitchIndicator.qml</file>
+        <file>Switch/MySwitch.qml</file>
+        <file>Delegat.qml</file>
+        <file>LayoutForButton.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file>app_icons/add.svg</file>
+        <file>app_icons/addIcon</file>
+        <file>app_icons/drawing.svg</file>
+        <file>app_icons/pause.svg</file>
+        <file>app_icons/play.svg</file>
+        <file>app_icons/plus.svg</file>
+        <file>app_icons/standartJPG.jpg</file>
+        <file>app_icons/standartRadio.png</file>
+        <file>app_icons/standartRadio2.jpg</file>
+        <file>app_icons/standartRadio3.PNG</file>
+        <file>app_icons/stop.svg</file>
+    </qresource>
+</RCC>

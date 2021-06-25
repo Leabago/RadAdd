@@ -1,0 +1,14 @@
+release/basscontroller.o
+release/controller.o
+release/filevalidator.o
+release/main.o
+release/radio.o
+release/radiomodel.o
+release/qrc_qml.o
+release/qrc_app_icons.o
+release/moc_bassPlay.o
+release/moc_basscontroller.o
+release/moc_controller.o
+release/moc_filevalidator.o
+release/moc_radio.o
+release/moc_radiomodel.o
