@@ -8,7 +8,7 @@
 
 class BassController  : public QObject
 {
-     Q_OBJECT
+    Q_OBJECT
     BassPlay bassPlay;
     QTimer *timer ;
 
@@ -22,16 +22,16 @@ public:
 
 public slots:
 
-     void play(const QString &currentRadioUrl);
-     void pasue();
-     void stop();
-     void metadata();
-     void freeStream();
+    void play(const QString &currentRadioUrl);
+    void pasue();
+    void stop();
+    void metadata();
+    void freeStream();
 
-     int initBass();
+    int initBass();
 
 signals:
-  void sendToQmlCurrSong(QString currSong);
+    void sendToQmlCurrSong(QString currSong);
 };
 
 #endif // BASSCONTROLLER_H
