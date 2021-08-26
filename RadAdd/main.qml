@@ -19,7 +19,7 @@ ApplicationWindow {
     property var delegatRadioWidth: width  // ширина приложения
     property var delegatRadioHeight: 100  // высота 1 радио в листе
     property var iconPathStandart:  "qrc:/app_icons/standartRadio"  // стандартная иконка
-//    property var freeSignal: true // блокировка сигнала в c++
+    property var freeSignal: true // блокировка добавления/удаления из любимых в c++
 //    property list<Switch> currentFavoriteSwitchList // лист switch для выкючения/включения
     property ListView currentListView // текущий лист
     property var currentModel // текущяя модель
@@ -37,6 +37,49 @@ ApplicationWindow {
 //            textForUrl.text = currSong;
 //        }
     }
+
+//    Connections {
+//        target: controller
+//        function onSentToQml() {
+//            console.log("onSentToQml")
+//            freeSignal = true;
+//            for (var i=0; i<currentFavoriteSwitchList.length; i++)
+//            {
+//                currentFavoriteSwitchList[i].enabled = true
+//                 console.log(" | " + currentFavoriteSwitchList )
+//            } currentFavoriteSwitchList = [];
+//        }
+//    } // Connections
+
+
+    Connections {
+        target: controller
+        function onSentToQml() {
+            console.log("onSentToQml")
+            freeSignal = true;
+//            favoriteSwitch.enabled = true
+        }
+    } // Connections
+
+
+//    Component.onCompleted:
+//    {
+//        let map = new Map();
+
+//        map.set(1, 'str1');   // ключ-строка
+//        map.set(1, 'num1');     // число
+
+
+//        console.log(map.get(1) + " +++++++++++++++++++++++" );
+//        console.log(map.size + " +++++++++++++++++++++++" );
+//    }
+
+
+    property string testF:  "F" + "link4"
+
+
+
+//    Component.onCompleted: console.log("++++++++++++++++ " +  (Flink4.favorite))
 
 
     DSM.StateMachine {  // управление плеером
@@ -96,9 +139,9 @@ ApplicationWindow {
         id: swipeView
         anchors.fill: parent
         currentIndex: tabBar.currentIndex
-        MyRadio {
+        My{
         }
-        FavoriteRadio{
+        Favorite{
         }
         Stations {
         }
@@ -121,6 +164,7 @@ ApplicationWindow {
 
     footer:
         Rectangle {
+        visible: false
         //           color: "green"
         height: delegatRadioHeight + 30
 
@@ -129,8 +173,6 @@ ApplicationWindow {
             height: 30
             width: parent.width
             color: "pink"
-
-
 
         Rectangle {
             id: rectangleButtonPanel

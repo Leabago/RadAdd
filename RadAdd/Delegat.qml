@@ -15,7 +15,29 @@ Component {
     Item {
         id: delegatRadioItem
         property var isCurrent: ListView.isCurrentItem
-        property ListView view: ListView.view
+        property ListView view: ListView.view 
+        property var radio: controller.getRadio(link)
+
+        Binding {
+            target: favoriteSwitch
+            property: "checked"
+            value: radio.favorite
+        }
+        Binding {
+            target: nameId
+            property: "text"
+            value: radio.name
+        }
+        Binding {
+            target: linkId
+            property: "text"
+            value: radio.link
+        }
+        Binding {
+            target: genreId
+            property: "text"
+            value: radio.genre+""
+        }
 
         property var iconPath:    applicationDirPath + "/radio_icons/" +  icon + ".jpg"
         property var  elemMargins5 : 5
@@ -23,38 +45,30 @@ Component {
         width: delegatRadioWidth
         height: delegatRadioHeight
 
-//        Connections {
-//            target: controller
-//            function onSentToQmlFavorite(exist) {
-//              favoriteSwitch.checked = exist
-//                console.log("+++++++++++++ exist:" + exist + "|" + link)
-//            }
-//        } // Connections, controller
-
         function changeRadio(){
             currentLink = link
             stop_buttonId.clicked();
             play_pause_buttonId.clicked();
-            console.log("cur url:" + link)
+            //            console.log("cur url:" + link)
         }
 
         function changeIndex()
         {
             if (currentListView != view)
             {
-                console.log("currentListView != view " + currentListView  + "|" + view)
+                //                console.log("currentListView != view " + currentListView  + "|" + view)
 
                 if (currentListView != null)
                     currentListView.currentIndex  = -1
 
                 currentListView = view
-            } else  console.log("currentListView == view " + currentListView  + "|" + view)
+            }
+            //            else  console.log("currentListView == view " + currentListView  + "|" + view)
 
             view.currentIndex = index
-            if (currentLink != link)
+            if (currentLink !== link)
                 changeRadio()
         }
-
 
         FileValidator {
             id: validator
@@ -66,17 +80,6 @@ Component {
             anchors.fill: parent
             onClicked: {
                 console.log("click")
-                //                if (currentModel != model)
-                //                {
-                //                    console.log("currentModel != model" + currentModel  + "|" + model)
-                //                    currentModel = model
-                //                } else    console.log("currentModel == model" + currentModel  + "|" + model)
-
-                //                if (currentListView != view)
-                //                {
-                //                    console.log("currentListView != view " + currentListView  + "|" + view)
-                //                    currentListView = view
-                //                } else console.log("currentListView == view " + currentListView  + "|" + view)
                 changeIndex()
             }
         }
@@ -98,13 +101,13 @@ Component {
                 property bool adapt: true
                 source: validator.fileValid ? validator.url :  iconPathStandart
 
-                Component.onCompleted:
-                {
-                    console.log("Completed Running!")
-                    console.log("validator.url       | "  + validator.url )
-                    console.log("iconPathStandart    | "  + iconPathStandart )
-                    console.log("itog finaly         | "  + imageIcon.source )
-                }
+                //                Component.onCompleted:
+                //                {
+                //                    console.log("Completed Running!")
+                //                    console.log("validator.url       | "  + validator.url )
+                //                    console.log("iconPathStandart    | "  + iconPathStandart )
+                //                    console.log("itog finaly         | "  + imageIcon.source )
+                //                }
 
                 width: delegatRadioHeight / 1.1
                 height: width
@@ -142,15 +145,18 @@ Component {
                     Rectangle{
                         width: rectangleRadioContent.width
                         height: nameId.height
+
                         Text {
                             id: nameId
                             text: name
+                            font.bold: true
+                            font.pointSize:  13
                         }
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
                                 console.log("click Flickable")
-                                 changeIndex()
+                                changeIndex()
                             }
                         }
                     }
@@ -174,11 +180,11 @@ Component {
                             anchors.fill: parent
                             onClicked: {
                                 console.log("click Flickable")
-                                 changeIndex()
+                                changeIndex()
                             }
                         }
                     }
-                } // Flickable name
+                } // Flickable link
 
                 Flickable {
                     width: parent.width
@@ -198,11 +204,35 @@ Component {
                             anchors.fill: parent
                             onClicked: {
                                 console.log("click Flickable")
-                                 changeIndex()
+                                changeIndex()
                             }
                         }
                     }
                 } // Flickable genre
+
+                Flickable {
+                    width: parent.width
+                    height: listeningId.height
+                    contentWidth: listeningId.width
+                    contentHeight: listeningId.height
+                    clip: true
+
+                    Rectangle{
+                        width: rectangleRadioContent.width
+                        height: listeningId.height
+                        Text {
+                            id: listeningId
+                            text: listening
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                console.log("click Flickable")
+                                changeIndex()
+                            }
+                        }
+                    }
+                } // Flickable listening
             } // Column
 
             Switch {
@@ -210,15 +240,26 @@ Component {
                 anchors.right: parent.right
                 anchors.verticalCenter:   parent.verticalCenter
                 anchors.margins: elemMargins5
-                checked: controller.favoriteLinkExist(link)
+                property bool loaded: false
+                Component.onCompleted: loaded = true
 
-                onCheckedChanged: {
-                    if (checked)
-                        console.log("checked")
-                    else console.log("no checked")
+                onCheckedChanged: { if (loaded) {
+//                        enabled = false
+                        if (freeSignal){
+                            freeSignal = false
+                            if (checked)
+                            {
+                                console.log("checked")
+                                controller.addToFavoite(link) // adding to the list "favorite"
+                            }
+                            else
+                            {
+                                console.log("no checked")
+                                controller.removeFromFavorite(link) // removal from the list "favorite"
+                            }
+                        } //   if (freeSignal)
+                    } //  if (loaded)
                 }
-
-
             }// Switch
         }// Rectangle
     } // Item

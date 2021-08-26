@@ -2,8 +2,8 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>DelegatRadio.qml</file>
-        <file>MyRadio.qml</file>
-        <file>FavoriteRadio.qml</file>
+        <file>My.qml</file>
+        <file>Favorite.qml</file>
         <file>Stations.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>Switch/SSwitch.qml</file>
@@ -12,5 +12,6 @@
         <file>Switch/MySwitch.qml</file>
         <file>Delegat.qml</file>
         <file>LayoutForButton.qml</file>
+        <file>AddNewButton.qml</file>
     </qresource>
 </RCC>

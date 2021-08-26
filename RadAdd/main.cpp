@@ -7,37 +7,40 @@
 #include <filevalidator.h>
 #include <basscontroller.h>
 
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
     QQmlContext *context = engine.rootContext();
-
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
 
-
     Controller controller;
+//    controller.createDateBase();
+    controller.readDB();
+//    controller.sortList();
     BassController bassController;
+
+
+    controller.stations.sort(0);
 
     context->setContextProperty("bassController", &bassController);
     context->setContextProperty("stations", QVariant::fromValue(&controller.stations));
-     context->setContextProperty("favorite", QVariant::fromValue(&controller.favorite));
-      context->setContextProperty("my", QVariant::fromValue(&controller.my));
+    context->setContextProperty("favorite", QVariant::fromValue(&controller.favorite));
+    context->setContextProperty("my", QVariant::fromValue(&controller.my));
+
+    const QList<QString> genre = controller.genre;
+    context->setContextProperty("genre", QVariant::fromValue(genre));
 
     context->setContextProperty("controller", &controller);
     engine.rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
 
-    controller.createDateBase();
-   controller.readDB();
+//     context->setContextProperty("test", &controller.test);
+//      context->setContextProperty("listObjects", QVariant::fromValue(&controller.test.listMy) );
 
-    //    QList<QObject*> radList;
-    //    //    radList.push_back(rad1);
-    //    radList.push_back( new Radio("asd1", "asd", "asd", 5,  list));
-    //    //       radList.push_back( new Radio("asd2", "asd", "asd", 5,  list));
-    //    //         radList.push_back( new Radio("asd3", "asd", "asd", 5,  list));
+//     context->setContextProperty("listObjects",  QVariant::fromValue(controller.listMy));
 
-    //     context->setContextProperty("radio", QVariant::fromValue(&radList));
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

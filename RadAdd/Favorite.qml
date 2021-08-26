@@ -2,9 +2,6 @@ import QtQuick
 import QtQuick.Controls
 
 
-import QtQuick.Controls.Material
-import QtQuick.Controls.Material.impl
-
 import "./Switch" as MySwitch
 
 import QtQuick.Shapes 1.12
@@ -24,5 +21,6 @@ Page {
         highlightMoveDuration : -1
         highlightMoveVelocity : 1000
         currentIndex: -1
+
     }
 }

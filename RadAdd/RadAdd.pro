@@ -15,8 +15,10 @@ SOURCES += \
         controller.cpp \
         filevalidator.cpp \
         main.cpp \
+        myobject.cpp \
         radio.cpp \
-        radiomodel.cpp
+        radiomodel.cpp \
+        testobject.cpp
 
 RESOURCES += qml.qrc \
     app_icons.qrc
@@ -38,8 +40,10 @@ HEADERS += \
     basscontroller.h \
     controller.h \
     filevalidator.h \
+    myobject.h \
     radio.h \
-    radiomodel.h
+    radiomodel.h \
+    testobject.h
 
 
 

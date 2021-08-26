@@ -20,63 +20,55 @@ void FileValidator::setUrl(const QUrl &url)
 
     QString strUrl = "file:" + url.toString();
 
-//    strUrl.replace("file:///", "");
-//    if (strUrl == mUrl.toString())
-//        return;
-
-//    mUrl =  strUrl;
-
-////    qDebug() << "FileValidator::setUrl" ;
-////    qDebug() << "mUrl: " << mUrl;
 
     if (strUrl == mUrl.toString())
            return;
 
       mUrl = strUrl;
 
-      qDebug() << "FileValidator::setUrl" ;
-      qDebug() << "mUrl: " << mUrl;
-         qDebug() << "mUrl.toLocalFile():" <<   mUrl.toLocalFile() ;
+//      qDebug() << "FileValidator::setUrl" ;
+//      qDebug() << "mUrl: " << mUrl;
+//         qDebug() << "mUrl.toLocalFile():" <<   mUrl.toLocalFile() ;
 
 
 
-      if (QFile::exists(mUrl.toString()))
-      {
-            qDebug() << "exist  " ;
-      } else {
-             qDebug() << "not exist  "  ;
-      }
+//      if (QFile::exists(mUrl.toString()))
+//      {
+//            qDebug() << "exist  " ;
+//      } else {
+//             qDebug() << "not exist  "  ;
+//      }
 
 
     if (mUrl.isEmpty()) {
         setFileErrorMessage(tr("Must specify a file"));
-          qDebug() << "Must specify a file"  ;
+//          qDebug() << "Must specify a file"  ;
     } else if (!QFile::exists(mUrl.toLocalFile())) {
         setFileErrorMessage(tr("File doesn't exist"));
-          qDebug() << "File doesn't exist"  ;
+//          qDebug() << "File doesn't exist"  ;
     } else {
         if (mTreatAsImage) {
             QImage image(mUrl.toLocalFile());
             if (image.isNull()) {
                 setFileErrorMessage(tr("Image can not be opened"));
-                 qDebug() << "Image can not be opened"  ;
+//                 qDebug() << "Image can not be opened"  ;
             } else {
                 // The image was loaded successfully, so we can clear
                 // whatever was here before.
                 setFileErrorMessage(QString());
-                  qDebug() << "The image was loaded successfully, so we can clear"  ;
+//                  qDebug() << "The image was loaded successfully, so we can clear"  ;
             }
         } else {
             // The file was loaded successfully.
             setFileErrorMessage(QString());
-             qDebug() << "The file was loaded successfully."  ;
+//             qDebug() << "The file was loaded successfully."  ;
         }
     }
 
     if (mFileErrorMessage.isEmpty()) {
         // Let derived classes check for problems.
         validate();
-           qDebug() << "The file validate"  ;
+//           qDebug() << "The file validate"  ;
     }
 
     emit urlChanged();

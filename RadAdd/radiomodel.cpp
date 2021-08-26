@@ -6,20 +6,19 @@ RadioModel::RadioModel(QObject *parent)
 {
 }
 
+//void RadioModel::addRadio( Radio &radio)
+//{
+//    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+//    m_radios.push_back(&radio);
+//    endInsertRows();
+//}
 
-void RadioModel::addRadio( Radio &radio)
-{
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_radios.push_back(&radio);
-    endInsertRows();
-}
-
-void RadioModel::addRadio( Radio *radio)
-{
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_radios.push_back(radio);
-    endInsertRows();
-}
+//void RadioModel::addRadio( Radio *radio)
+//{
+//    beginInsertRows(QModelIndex(), rowCount(), rowCount());
+//    m_radios.push_back(radio);
+//    endInsertRows();
+//}
 
 void RadioModel::addRadio( Radio *&radio)
 {
@@ -35,16 +34,12 @@ void RadioModel::removeByIndex(int index)
     endRemoveRows();
 }
 
-
-
 int RadioModel::rowCount(const QModelIndex & parent) const {
     Q_UNUSED(parent);
     return m_radios.count();
 }
 
-QVariant RadioModel::data(const QModelIndex & index, int role) const {
-
-
+QVariant RadioModel::data(const QModelIndex & index, int role)  const {
     if (index.row() < 0 || index.row() >= m_radios.count())
         return QVariant();
 
@@ -57,17 +52,20 @@ QVariant RadioModel::data(const QModelIndex & index, int role) const {
         return radio->icon();
     else if (role == ListeningRole)
         return radio->listening();
+    else if (role == FavoriteRole)
+        return radio->favorite();
     else if (role == GenreRole)
         return radio->genre();
     return QVariant();
 }
 
-QHash<int, QByteArray> RadioModel::roleNames() const {
+QHash<int, QByteArray> RadioModel::roleNames()  const {
     QHash<int, QByteArray> roles;
     roles[LinkRole] = "link";
     roles[NameRole] = "name";
     roles[IconRole] = "icon";
     roles[ListeningRole] = "listening";
+    roles[FavoriteRole] = "favorite";
     roles[GenreRole] = "genre";
 
     return roles;
@@ -76,4 +74,24 @@ QHash<int, QByteArray> RadioModel::roleNames() const {
 QList<Radio*>  RadioModel::getModelData()
 {
     return  m_radios;
+}
+
+  QList<Radio*>*   RadioModel::getModelDataLink()
+  {
+      return &m_radios;
+  }
+
+void RadioModel::removeRadio(Radio *rad)
+{
+    int index = m_radios.indexOf(rad);
+    beginRemoveRows(QModelIndex(), index, index);
+    m_radios.removeOne(rad);
+    endRemoveRows();
+}
+
+void RadioModel::insert(int index, const QString &colorValue)
+{
+    qDebug() << "insert";
+    emit QAbstractItemModel::beginResetModel();
+     emit QAbstractItemModel::endResetModel();
 }

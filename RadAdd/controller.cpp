@@ -3,6 +3,9 @@
 Controller::Controller(QObject * parent)
     : QObject(parent)
 {
+
+
+//    listMy.push_back("text2");
     //    genre.push_back("Народная музыка");             //0
     //    genre.push_back("Духовная музыка");             //1
     //    genre.push_back("Академическая музыка");        //2
@@ -28,6 +31,7 @@ Controller::Controller(QObject * parent)
     genre.push_back("asdd");                      //4
     genre.push_back("test123");
 
+    twoModel = new TwoModels(genre);
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("RadioDB");
@@ -96,6 +100,17 @@ const QString insertRadioGenre =
 "SELECT * FROM radio_genre WHERE radioId = :radioId AND genreId = :genreId "
 ") LIMIT 1";
 
+const QString insertFavorite =
+        "INSERT INTO favorite (radioId) "
+"SELECT * FROM (SELECT :radioId) AS tmp "
+"WHERE NOT EXISTS ( "
+"SELECT * FROM favorite WHERE radioId = :radioId "
+") LIMIT 1";
+
+const QString deleteFavorite =
+"DELETE FROM favorite "
+"WHERE radioId = :radioId ";
+
 
 int Controller::createDateBase()
 {
@@ -151,20 +166,36 @@ int Controller::createDateBase()
 int Controller::readDB()
 {
     QSqlQuery query( db );
-    QHash<QString, Radio*> allRadiosHash;
+    QMultiHash<QString, QString> allGenre;
 
     if( !query.exec("SELECT * FROM radio_genre")){
         qDebug() << "read DB radio_genre" << db.lastError().text();
         //          return 1;
     }
-
     QSqlRecord recordRadioGenre = query.record();
     const int radioId = recordRadioGenre.indexOf("radioId");
     const int genreId = recordRadioGenre.indexOf("genreId");
-    QMultiHash<QString, QString> allGenre;
 
     while (query.next() ) {
         allGenre.insert(query.value(radioId).toString(), query.value(genreId).toString());
+    }
+
+    if( !query.exec("SELECT * FROM favorite")){
+        qDebug() << "read DB favorite" << db.lastError().text();
+        //        return 1;
+    }
+
+    QSqlRecord recordFavorite = query.record();
+
+    QSet<QString> favoriteSet;
+
+    while (query.next() ) {
+        const int radioId = recordFavorite.indexOf("radioId");
+        QString radioIdStr = query.value(radioId).toString();
+        //        Radio *favoriteRadio =  allRadiosHash[radioIdStr];
+        //        favorite.addRadio( *favoriteRadio);
+        //      favoriteHash.insert(favoriteRadio->link(), favoriteRadio);
+        favoriteSet.insert(radioIdStr);
     }
 
     if( !query.exec("SELECT * FROM radio")){
@@ -181,8 +212,8 @@ int Controller::readDB()
         const int iconR = record.indexOf("icon");
         const int listeningR = record.indexOf("listening");
 
-        QString url_str = query.value(linkR).toString();
-        qDebug() << url_str ;
+        QString link_str = query.value(linkR).toString();
+        qDebug() << link_str ;
 
         QList<QString> genreRadio = allGenre.values(query.value(linkR).toString());
 
@@ -191,47 +222,62 @@ int Controller::readDB()
                                     query.value(iconR).toString(),
                                     query.value(listeningR).toInt(),
                                     genreRadio);
+        //        if (favoriteHash.contains(link_str))
+        //            newRadio->setFavorite(true);
 
-        allRadiosHash.insert(newRadio->link(), newRadio);
+
+
+        if (favoriteSet.contains(link_str))
+        {
+            newRadio->setFavorite(true);
+            favorite.addRadio( newRadio);
+            favoriteHash.insert(link_str, newRadio);
+
+        }
+
+        //           TestObject *testObj  ;
+
+
+
+        stationsHash.insert(newRadio->link(), newRadio);
+        stations.addRadio( newRadio  );
+
+        //        sfHash.insert(newRadio->link(), testObj);
+
+        stationsSet.push_back(newRadio);
+
     }
 
-    qDebug() << "allRadiosHash";
+    //        qDebug() << "allRadiosHash";
+    //    QHash<QString, Radio*>::iterator iterHash = stationsHash.begin();
+    //    for (; iterHash != stationsHash.end(); ++iterHash)
+    //    {
+    //        //            qDebug() << iterHash.key() ;
+    //        stations.addRadio( iterHash.value() );
+    //    }
 
-    QHash<QString, Radio*>::iterator iterHash = allRadiosHash.begin();
 
-    for (; iterHash != allRadiosHash.end(); ++iterHash)
+    qDebug() << "allRadiosHash check point stations";
+
+    for (int i = 0; i < stations.getModelData().size(); ++i  )
     {
-        qDebug() << iterHash.key() ;
-        stations.addRadio( *iterHash.value() );
+        qDebug() <<  stations.getModelData()[i]->link() << "|"  << stations.getModelData()[i];
+    }
+    qDebug() << "allRadiosHash check point favorite";
+    for (int i = 0; i < favorite.getModelData().size(); ++i  )
+    {
+        qDebug() <<  favorite.getModelData()[i]->link() << "|"  << favorite.getModelData()[i];
     }
 
-
-    if( !query.exec("SELECT * FROM favorite")){
-        qDebug() << "read DB favorite" << db.lastError().text();
-        //        return 1;
-    }
-
-    QSqlRecord recordFavorite = query.record();
-
-    while (query.next() ) {
-        const int radioId = recordFavorite.indexOf("radioId");
-        QString radioIdStr = query.value(radioId).toString();
-        Radio *favoriteRadio =  allRadiosHash[radioIdStr];
-        favorite.addRadio( *favoriteRadio);
-        favoriteHash.insert(favoriteRadio->link(), favoriteRadio);
-    }
 
     return 0;
 }
 
 bool Controller::favoriteLinkExist(const QString link )
 { 
-//    emit sentToQmlFavorite(favoriteHash.contains(link));
+    //    emit sentToQmlFavorite(favoriteHash.contains(link));
     return favoriteHash.contains(link);
 }
-
-
-
 
 
 int Controller::inserDBinGenre(const QString genre)
@@ -297,7 +343,8 @@ int Controller::inserDBinRadio(const QString &link, const QString &name, const Q
 
 int Controller::insertList(const QString &link, const QString &name, const QString &icon, const int &listening, const QList<QString> genre)
 {
-    stations.addRadio( new Radio(link, name, icon, listening, genre));
+    Radio *rad =  new Radio(link, name, icon, listening, genre);
+    stations.addRadio( rad);
     return 0;
 }
 
@@ -307,3 +354,169 @@ int Controller::insert(const QString &link, const QString &name, const QString &
     //    insertList(link, name, icon, listening, genre);
     return 0;
 }
+
+//void Controller::addToFavoite(const QVariant& var){
+////    QObject* obj = qvariant_cast<QObject*>(var);
+////    Radio *radio = qobject_cast<Radio*>(obj);
+//    qDebug() << "info" << var ;
+////    qDebug() << "info" << radio->favorite() ;
+//    //    radio->setFavorite(true);
+//    //    favorite.addRadio(*radio);
+//    //    emit sentToQml();
+//    //    addToFavoiteInDB(radio->url()) ;
+//}
+
+void Controller::addToFavoite(const QString &radioId){
+    if (stationsHash.contains(radioId))
+    {
+        if (addToFavoriteDB(radioId))
+        {
+            Radio *addToFavorite = stationsHash[radioId];
+            addToFavorite->setFavorite(true);
+            favorite.addRadio(addToFavorite);
+            favoriteHash.insert(radioId, addToFavorite);
+            emit sentToQml();
+        }
+
+        //         favoriteSetObj.push_back(addToFavorite);
+        //        emit sentToQml();
+        //        emit stations.favoriteChanged();
+        //     qDebug() << favoriteSetObj.size();
+        emit sentToQml();
+    }
+}
+
+bool Controller::addToFavoriteDB(const QString &radioId)
+{
+    QSqlQuery query(db);
+    query.prepare(insertFavorite);
+    query.bindValue( ":radioId", radioId );
+
+    if( !query.exec() ) {
+        qDebug() << "insertInto favorite " << db.lastError().text();
+        return false;
+    } else return true;
+}
+
+void Controller::removeFromFavorite(const  QString &radioId)
+{
+    if (favoriteHash.contains(radioId))
+    {
+        qDebug() <<  "contain";
+                if (  removeFromFavoriteDB(radioId) )
+                {
+                    Radio *removeFromFavorite = favoriteHash[radioId];
+                    removeFromFavorite->setFavorite(false);
+                    favorite.removeRadio(removeFromFavorite);
+                    favoriteHash.remove(radioId);
+                     emit sentToQml();
+                }
+        //        for (int i = 0; i <   stations.getModelData().size(); ++i)
+        //        {
+        //            qDebug() <<  stations.getModelData()[i]->link() << "|" <<  stations.getModelData()[i]->favorite() ;
+        //        }
+
+        // emit stations.favoriteChanged();
+    } else  qDebug() <<  "does no contain";
+
+    //            for (QHash<QString, Radio*>::iterator  i = favoriteHash.begin(); i!=favoriteHash.end(); ++i)
+    //            {
+    //                qDebug() <<  "|" + i.key() ;
+    //            }
+    qDebug() <<  "| removeFromFavorite " ;
+}
+
+  bool Controller::removeFromFavoriteDB(const  QString &radioId)
+{
+      QSqlQuery query(db);
+      query.prepare(deleteFavorite);
+      query.bindValue( ":radioId", radioId );
+
+      if( !query.exec() ) {
+          qDebug() << "delete favorite " << db.lastError().text();
+          return false;
+      } else return true;
+}
+
+bool   sortListening(const Radio &left, const Radio &right)
+{
+    return (left.listening() >  right.listening()) ;
+}
+
+
+bool   sort2(  const Radio *left,  const Radio *right)
+{
+    //     qDebug() <<  QString::compare( left.name(), right.name());
+    qDebug() <<  left->name() << "|" <<   right->name() ;
+    qDebug() <<  left->listening() << "|" <<   right->listening() ;
+    qDebug() << (left->listening() <  right->listening() ) ;
+
+    return (left->listening() >  right->listening() );
+
+    //       int asd =(left.name() >  right.name() ) ;
+    //       if (asd > 0) return true;
+    //       else return false;
+}
+
+int Controller::sortList(){
+    qDebug() << "Sort" ;
+
+
+    //  for (int i = 0; i < stations.getModelData().size(); ++i)
+    //  {
+
+    //  }
+    // Radio *rad = stations.m_radios[0] ;
+    // stations.m_radios[0] =  stations.m_radios[1];
+    //  stations.m_radios[1] = rad;
+
+    QList<int> asd;
+
+    QList<Radio*> *fieldsList = stations.getModelDataLink();
+
+    //  Radio *rad = fieldsList->at(0);
+    //   Radio *rad = stations.m_radios[0] ;
+    //   stations.m_radios[0] =  stations.m_radios[1];
+    //    stations.m_radios[1] = rad;
+    //     stations.m_radios[2] =  stations.m_radios[3];
+
+    //  const  QList<Radio*>::iterator left = stations.m_radios.begin();
+    //      Radio *rad =  *stations.m_radios.begin();
+
+    //   const  QList<Radio*>::iterator &right = stations.m_radios.end();
+
+    //     qDebug() << "left" <<   (*&*right)->listening() << "|";
+
+
+    std::vector<Radio*> vec;
+
+    for ( int i = 0; i < stations.m_radios.size(); ++i)
+    {
+        qDebug() << "|" << stations.m_radios[i]->listening() ;
+        vec.push_back( stations.m_radios[i]);
+    }
+
+    //    std::sort(vec.begin(), vec.end(),  sort2 );
+
+    std::sort(stations.m_radios.begin(), stations.m_radios.end(),   sort2 );
+
+    qDebug() << "sort";
+
+    for ( int i = 0; i < vec.size(); ++i)
+    {
+        qDebug() << "|" << vec[i]->listening() ;
+    }
+
+
+
+    return 0;
+}
+
+bool   Controller::variantLessThan(const Radio &left, const Radio &right)
+{
+    return left.listening() <  right.listening() ;
+}
+
+
+
+
