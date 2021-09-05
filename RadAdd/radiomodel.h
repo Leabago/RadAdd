@@ -14,28 +14,25 @@ public:
         LinkRole = Qt::UserRole + 1,
         NameRole,
         IconRole,
-        ListeningRole,
+        ListeninHoursRole,
         FavoriteRole,
-        GenreRole
     };
     void removeByIndex(int index);
     void addRadio(Radio *&radio);
-    //    void addRadio(Radio &radio);
-    //    void addRadio(Radio *radio);
-    void  removeRadio(Radio *rad);
+    void removeRadio(Radio *rad);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const ;
     QList<Radio*>  getModelData();
-     QList<Radio*>*  getModelDataLink();
+    QList<Radio*>*  getModelDataLink();
 
 protected:
     QHash<int, QByteArray> roleNames()  const;
-    public: // private
+public: // private
     QList<Radio*> m_radios;
 
-public slots:
-    Q_INVOKABLE void insert(int index, const QString& colorValue);
+//public slots:
+//    Q_INVOKABLE void insert(int index, const QString& colorValue);
 
 signals:
     void favoriteChanged();

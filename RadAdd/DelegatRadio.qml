@@ -3,10 +3,10 @@ import QtQuick.Controls 2.12
 
 import App 1.0
 
-import QtQuick
-import QtQml.StateMachine as DSM
-import Qt5Compat.GraphicalEffects
-import QtQuick.Layouts
+import QtQuick 2.12
+import QtQml.StateMachine 2.12 as DSM
+import Qt5Compat.GraphicalEffects 2.12
+import QtQuick.Layouts 2.12
 
 
 Component {

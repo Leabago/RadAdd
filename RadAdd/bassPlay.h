@@ -10,9 +10,14 @@ class BassPlay : public QThread
     Q_OBJECT
 
 private:
-    HSTREAM *stream;
+    HSTREAM* stream;
     QString url = "";
 public:
+
+    HSTREAM* getStream(){
+        qDebug() << "getStream "  << *stream;
+        return stream;
+    }
 
     QString getUrl(){ return url;}
 
@@ -27,10 +32,18 @@ public:
         BASS_ChannelStop(*stream);
           BASS_StreamFree(*stream);
 
-        *stream = BASS_StreamCreateURL(url.toLatin1(), 0, 0, 0, 0);
-          qDebug() << "stream ++++" << *stream ;
+        *stream = BASS_StreamCreateURL(url.toLatin1(), 0, 0, 0, 0);         
        BASS_ChannelPlay(*stream, false);
+         qDebug() << "stream ++++" << *stream ;
+           qDebug() << "stream ---" << *stream ;
+//         streamState = *stream ;
+
+     emit resultReady(*stream );
     }
+
+signals:
+    void resultReady(const HSTREAM &s);
+
 };
 
 #endif // BASSPLAY_H

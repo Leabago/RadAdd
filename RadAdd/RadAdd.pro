@@ -1,7 +1,8 @@
 QT += quick
 QT += sql
 
-QT += statemachine
+#QT += statemachine
+#QT += core5compat
 
 
 CONFIG += c++14
@@ -15,7 +16,6 @@ SOURCES += \
         controller.cpp \
         filevalidator.cpp \
         main.cpp \
-        myobject.cpp \
         radio.cpp \
         radiomodel.cpp \
         testobject.cpp
@@ -35,12 +35,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    Genre.h \
     bassPlay.h \
     basscontroller.h \
     controller.h \
     filevalidator.h \
-    myobject.h \
     radio.h \
     radiomodel.h \
     testobject.h

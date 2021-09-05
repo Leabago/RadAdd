@@ -6,20 +6,6 @@ RadioModel::RadioModel(QObject *parent)
 {
 }
 
-//void RadioModel::addRadio( Radio &radio)
-//{
-//    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-//    m_radios.push_back(&radio);
-//    endInsertRows();
-//}
-
-//void RadioModel::addRadio( Radio *radio)
-//{
-//    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-//    m_radios.push_back(radio);
-//    endInsertRows();
-//}
-
 void RadioModel::addRadio( Radio *&radio)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
@@ -50,12 +36,10 @@ QVariant RadioModel::data(const QModelIndex & index, int role)  const {
         return radio->name();
     else if (role == IconRole)
         return radio->icon();
-    else if (role == ListeningRole)
-        return radio->listening();
+    else if (role == ListeninHoursRole)
+        return radio->listeningHours();
     else if (role == FavoriteRole)
-        return radio->favorite();
-    else if (role == GenreRole)
-        return radio->genre();
+        return radio->favorite();   
     return QVariant();
 }
 
@@ -64,10 +48,8 @@ QHash<int, QByteArray> RadioModel::roleNames()  const {
     roles[LinkRole] = "link";
     roles[NameRole] = "name";
     roles[IconRole] = "icon";
-    roles[ListeningRole] = "listening";
+    roles[ListeninHoursRole] = "listeningHours";
     roles[FavoriteRole] = "favorite";
-    roles[GenreRole] = "genre";
-
     return roles;
 }
 
@@ -89,9 +71,9 @@ void RadioModel::removeRadio(Radio *rad)
     endRemoveRows();
 }
 
-void RadioModel::insert(int index, const QString &colorValue)
-{
-    qDebug() << "insert";
-    emit QAbstractItemModel::beginResetModel();
-     emit QAbstractItemModel::endResetModel();
-}
+//void RadioModel::insert(int index, const QString &colorValue)
+//{
+//    qDebug() << "insert";
+//    emit QAbstractItemModel::beginResetModel();
+//     emit QAbstractItemModel::endResetModel();
+//}

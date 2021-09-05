@@ -42,6 +42,7 @@ void BassController::play(const QString &currentRadioUrl)
         BASS_ChannelPlay(stream, false);
     }
 
+  stateStream = bassPlay.getStream();
 
 
     if (!timerStart)

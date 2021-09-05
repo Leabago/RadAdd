@@ -5,9 +5,12 @@ import App 1.0
 
 import QtQuick 2.12
 //import QtQml.StateMachine 2.12 as DSM
+import QtQml.StateMachine 1.0 as DSM
+
 import Qt5Compat.GraphicalEffects
-//import QtQuick.Layouts 2.12
 //import QtGraphicalEffects 1.0
+
+//import QtQuick.Layouts 2.12
 
 
 Component {
@@ -16,32 +19,36 @@ Component {
     Item {
         id: delegatRadioItem
         property var isCurrent: ListView.isCurrentItem
-        property ListView view: ListView.view 
-        property var radio: controller.getRadio(link)
+        property ListView view: ListView.view
+        //        property var radio: controller.getRadio(link)
 
-        Binding {
-            target: favoriteSwitch
-            property: "checked"
-            value: radio.favorite
-        }
         Binding {
             target: nameId
             property: "text"
-            value: radio.name
+            value: name
         }
         Binding {
             target: linkId
             property: "text"
-            value: radio.link
+            value: link
         }
 
+        property string iconPath:    applicationDirPath + "/radio_icons/" +  icon + ".jpg"
+        property real  elemMargins5 : 3
 
-        property var iconPath:    applicationDirPath + "/radio_icons/" +  icon + ".jpg"
-        property var  elemMargins5 : 5
+        property real delegatRadioItemHeightVar1: 1.5
+        property real delegatRadioItemHeightVar2: 0.7
+        property real rectangleRadioContentRadius: 10
+        property real rectangleRadioContentBorderWidth: 2
+        property real imageIconWidth: 1.2
+        property real nameIdVar1: 3
+        property real nameIdVar2: 0.8
+
 
         width: delegatRadioWidth
-        height: delegatRadioHeight
-//         height:  (delegatRadioWidth*3 * delegatRadioHeight*4) / 1000
+        //        height: delegatRadioHeight
+        //                height:  Math.pow((delegatRadioHeightGlobal*50), 0.5)
+        height:   Math.pow(delegatRadioHeightGlobal/delegatRadioItemHeightVar1, delegatRadioItemHeightVar2)
 
 
         function changeRadio(){
@@ -53,6 +60,7 @@ Component {
 
         function changeIndex()
         {
+             console.log("changeIndex")
             if (currentListView != view)
             {
                 //                console.log("currentListView != view " + currentListView  + "|" + view)
@@ -85,15 +93,17 @@ Component {
 
         Rectangle {
             id: rectangleRadioContent
-            anchors.margins: elemMargins5
+            anchors.margins: elemMargins5/1.2
+            anchors.leftMargin: elemMargins5*1.5
+            anchors.rightMargin:  elemMargins5*1.5
             anchors.fill: parent
-//            width: parent.width
-//            height: delegatRadioWidth/10
-            radius: height / 10
+            radius: height / rectangleRadioContentRadius
+
+
 
             border {
                 color: "black"
-                width: 2
+                width: rectangleRadioContentBorderWidth
             }
 
             Image {
@@ -102,19 +112,10 @@ Component {
                 property bool adapt: true
                 source: validator.fileValid ? validator.url :  iconPathStandart
 
-                //                Component.onCompleted:
-                //                {
-                //                    console.log("Completed Running!")
-                //                    console.log("validator.url       | "  + validator.url )
-                //                    console.log("iconPathStandart    | "  + iconPathStandart )
-                //                    console.log("itog finaly         | "  + imageIcon.source )
-                //                }
-
-                width: delegatRadioHeight / 1.1
+                width: delegatRadioItem.height / imageIconWidth
                 height: width
-                anchors.margins: elemMargins5
-//                anchors.left: parent.left
                 anchors.verticalCenter: parent.verticalCenter
+                x: elemMargins5/1.2
 
                 layer.enabled: rounded
                 layer.effect: OpacityMask {
@@ -133,11 +134,13 @@ Component {
 
             Column {
                 anchors.left: imageIcon.right
-                anchors.right: favoriteSwitch.left
+                width: rectangleRadioContent.width - imageIcon.width - elemMargins5*2
                 anchors.verticalCenter:  parent.verticalCenter
 
+                anchors.margins:  elemMargins5/1.2
+
                 Flickable {
-                    width: parent.width
+                    width: parent.width  -  imageIcon.x  - anchors.margins
                     height: nameId.height
                     contentWidth: nameId.width
                     contentHeight: nameId.height
@@ -149,26 +152,27 @@ Component {
 
                         Text {
                             id: nameId
-                            text: model.name
+                            text: name
                             font.bold: true
-                            font.pointSize:  13
+                            font.pointSize:  Math.pow(delegatRadioItem.height /nameIdVar1, nameIdVar2)
 
-//                            Component.onCompleted: {
-//                                console.log( "name = " +  name )
-//                            }
+                            Component.onCompleted: {
+                                console.log( "name = " +  name )
+                            }
                         }
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
-                                console.log("click Flickable")
+                                console.log("click Flickable1")
                                 changeIndex()
+                                console.log("click Flickable2")
                             }
                         }
                     }
                 } // Flickable name
 
                 Flickable {
-                    width: parent.width
+                    width: parent.width  -  imageIcon.x  - anchors.margins
                     height: linkId.height
                     contentWidth: linkId.width
                     contentHeight: linkId.height
@@ -179,31 +183,8 @@ Component {
                         height: linkId.height
                         Text {
                             id: linkId
-                            text:  model.link
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: {
-                                console.log("click Flickable")
-//                                changeIndex()
-                            }
-                        }
-                    }
-                } // Flickable link
-
-                Flickable {
-                    width: parent.width
-                    height: listeningId.height
-                    contentWidth: listeningId.width
-                    contentHeight: listeningId.height
-                    clip: true
-
-                    Rectangle{
-                        width: rectangleRadioContent.width
-                        height: listeningId.height
-                        Text {
-                            id: listeningId
-                            text:  model.listeningHours
+                            text: link
+                            font.pointSize:  Math.pow(delegatRadioItem.height /(nameIdVar1*2), nameIdVar2)
                         }
                         MouseArea {
                             anchors.fill: parent
@@ -213,35 +194,8 @@ Component {
                             }
                         }
                     }
-                } // Flickable listening
+                } // Flickable link
             } // Column
-
-            Switch {
-                id: favoriteSwitch
-                anchors.right: parent.right
-                anchors.verticalCenter:   parent.verticalCenter
-                anchors.margins: elemMargins5
-                property bool loaded: false
-                Component.onCompleted: loaded = true
-
-                onCheckedChanged: { if (loaded) {
-//                        enabled = false
-                        if (freeSignal){
-                            freeSignal = false
-                            if (checked)
-                            {
-                                console.log("checked")
-                                controller.addToFavoite(link) // adding to the list "favorite"
-                            }
-                            else
-                            {
-                                console.log("no checked")
-                                controller.removeFromFavorite(link) // removal from the list "favorite"
-                            }
-                        } //   if (freeSignal)
-                    } //  if (loaded)
-                }
-            }// Switch
         }// Rectangle
     } // Item
 }

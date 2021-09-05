@@ -16,11 +16,12 @@ int main(int argc, char *argv[])
     QQmlContext *context = engine.rootContext();
     qmlRegisterType<FileValidator>("App", 1, 0, "FileValidator");
 
-    Controller controller;
-//    controller.createDateBase();
+     BassController bassController;
+    Controller controller(bassController);
+    controller.createDateBase();
     controller.readDB();
 //    controller.sortList();
-    BassController bassController;
+
 
 
     controller.stations.sort(0);
@@ -29,17 +30,10 @@ int main(int argc, char *argv[])
     context->setContextProperty("stations", QVariant::fromValue(&controller.stations));
     context->setContextProperty("favorite", QVariant::fromValue(&controller.favorite));
     context->setContextProperty("my", QVariant::fromValue(&controller.my));
-
-    const QList<QString> genre = controller.genre;
-    context->setContextProperty("genre", QVariant::fromValue(genre));
+    context->setContextProperty("test", QVariant::fromValue(&controller.test));
 
     context->setContextProperty("controller", &controller);
     engine.rootContext()->setContextProperty("applicationDirPath", QGuiApplication::applicationDirPath());
-
-//     context->setContextProperty("test", &controller.test);
-//      context->setContextProperty("listObjects", QVariant::fromValue(&controller.test.listMy) );
-
-//     context->setContextProperty("listObjects",  QVariant::fromValue(controller.listMy));
 
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));

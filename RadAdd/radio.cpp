@@ -6,8 +6,8 @@ Radio::Radio(QObject *parent)
     connect(this, SIGNAL(nameChanged()), this, SLOT(nameChangedSlot()));
 }
 
-Radio:: Radio(const QString &link, const QString &name,  const QString &icon, const  unsigned int& listening,  const QList<QString> &genre, QObject *parent )
-    :QObject(parent), m_link(link), m_name(name), m_icon(icon), m_listening(listening), m_genre(genre)
+Radio:: Radio(const QString &link, const QString &name,  const QString &icon, const  unsigned int& listeningHours,  QObject *parent )
+    :QObject(parent), m_link(link), m_name(name), m_icon(icon), m_listeningHours(listeningHours)
 {
     connect(this, SIGNAL(nameChanged()), this, SLOT(nameChangedSlot()));
 }
@@ -24,13 +24,11 @@ QString Radio::name() const {
 QString Radio::icon() const {
     return m_icon;
 }
-QList<QString> Radio::genre() const{
-    return m_genre;
-}
 
-unsigned int Radio::listening() const
+
+unsigned int Radio::listeningHours() const
 {
-    return m_listening;
+    return m_listeningHours;
 }
 
 bool Radio::favorite() const
@@ -63,21 +61,12 @@ void Radio::setIcon(const QString &icon)
     }
 }
 
-void  Radio::setListening(const unsigned   int& listening)
+void  Radio::setlisteningHours(const unsigned   int& listeningHours)
 {
-    if (m_listening != listening)
+    if (m_listeningHours != listeningHours)
     {
-        m_listening = listening;
-        emit listeningChanged();
-    }
-}
-
-void Radio::setGenre(const QList<QString> &genre)
-{
-    if (m_genre != genre)
-    {
-        m_genre = genre;
-        emit genreChanged();
+        m_listeningHours = listeningHours;
+        emit listeningHoursChanged();
     }
 }
 

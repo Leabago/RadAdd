@@ -9,6 +9,7 @@
 class BassController  : public QObject
 {
     Q_OBJECT
+    public:
     BassPlay bassPlay;
     QTimer *timer ;
 
@@ -17,6 +18,8 @@ class BassController  : public QObject
 
 public:
     HSTREAM stream;
+
+    HSTREAM* stateStream ;
 
     explicit BassController(QObject *parent = 0);
 

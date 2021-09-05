@@ -18,7 +18,9 @@ QUrl FileValidator::url() const
 void FileValidator::setUrl(const QUrl &url)
 {
 
-    QString strUrl = "file:" + url.toString();
+    QString strUrl = url.toString();
+
+    qDebug( ) << "file validate" <<  strUrl ;
 
 
     if (strUrl == mUrl.toString())
@@ -26,9 +28,9 @@ void FileValidator::setUrl(const QUrl &url)
 
       mUrl = strUrl;
 
-//      qDebug() << "FileValidator::setUrl" ;
-//      qDebug() << "mUrl: " << mUrl;
-//         qDebug() << "mUrl.toLocalFile():" <<   mUrl.toLocalFile() ;
+      qDebug() << "FileValidator::setUrl" ;
+      qDebug() << "mUrl: " << mUrl;
+         qDebug() << "mUrl.toLocalFile():" <<   mUrl.toLocalFile() ;
 
 
 

@@ -34,11 +34,11 @@
 **
 ****************************************************************************/
 
-import QtQuick
+import QtQuick 2.12
 //import QtQuick.Controls.Material
 //import QtQuick.Controls.Material.impl
 
-import QtQuick.Templates as T
+import QtQuick.Templates 2.12 as T
 
 T.Switch {
     id: control

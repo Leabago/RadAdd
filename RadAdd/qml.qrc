@@ -13,5 +13,8 @@
         <file>Delegat.qml</file>
         <file>LayoutForButton.qml</file>
         <file>AddNewButton.qml</file>
+        <file>DelegatMy.qml</file>
+        <file>RadioIconDele.qml</file>
+        <file>RectangleButton.qml</file>
     </qresource>
 </RCC>

@@ -2,9 +2,9 @@ import QtQuick 2.0
 
 
 //import QtQuick.Controls.Material
-import QtQuick.Controls.Material.impl
+import QtQuick.Controls.Material.impl 2.12
 
-import QtQuick.Templates as T
+import QtQuick.Templates 2.12 as T
 
 T.Switch {
     id: control
